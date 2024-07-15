@@ -3,6 +3,7 @@ import http.client
 import requests
 from bs4 import BeautifulSoup
 from sentence_transformers import SentenceTransformer, util
+from dotenv import load_dotenv
 
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.document_loaders import PyPDFDirectoryLoader
@@ -11,6 +12,8 @@ from langchain_chroma import Chroma
 from langchain import PromptTemplate
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import Document  
+
+load_dotenv()
 
 search_api_key = os.getenv('SEARCH_API_KEY')
 open_ai_key = os.getenv('OPEN_AI_KEY')
@@ -484,7 +487,6 @@ if len(relevant_context_str) > 10000:
     for context in cut_context_list:
         answer = answer_agent_chain.invoke({"context":context, "question":query}).content
         answer_list.append(answer)
-    print(answer_list)
     choice_response = choice_chain.invoke({"question": query, "answers": answer_list})
     choice_dict = json.loads(choice_response.content)
     choice = {"output": choice_dict["answer"]}["output"]
